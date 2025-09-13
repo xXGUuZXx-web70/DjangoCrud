@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Tareas</h1>
+<ul>
+    {% for task in tasks %}
+        <li>
+            {% if task.important %}
+                <strong>{{ task.title }}</strong>
+            {% else %}
+                {{ task.title }}
+            {% endif %}
+            <p>{{ task.description }}</p>
+            <p>{{ task.user.username }}</p>
+            <p>{{ task.created }}</p>
+            <p>{{ task.datecompleted }}</p>
+
+            <a href="{% url 'editar_task' task.id %}">Editar</a> | 
+            <a href="{% url 'eliminar_task' task.id %}">Eliminar</a>
+        </li>
+    {% empty %}
+        <li>No hay tareas disponibles.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'create_task' %}">Crear nueva tarea</a>
+{% endblock %}
