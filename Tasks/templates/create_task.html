@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h1>Crear Tarea</h1>
-{{ error }}
-
-<form action="/tasks/create/" method="post">
+{% if error %}
+    <p style="color:blueviolet;">{{ error }}</p>
+{% endif %}
+<form method="post">
     {% csrf_token %}
-{{form.as_p}}
-<button type="submit"> Crear Tarea</button>
+    {{ form.as_p }}
+    <button type="submit">Crear Tarea</button>
 </form>
+<a href="{% url 'tasks' %}">Volver a tareas</a>
 {% endblock %}

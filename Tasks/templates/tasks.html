@@ -10,13 +10,13 @@
             {% else %}
                 {{ task.title }}
             {% endif %}
+
             <p>{{ task.description }}</p>
             <p>{{ task.user.username }}</p>
             <p>{{ task.created }}</p>
             <p>{{ task.datecompleted }}</p>
 
-            <a href="{% url 'editar_task' task.id %}">Editar</a> | 
-            <a href="{% url 'eliminar_task' task.id %}">Eliminar</a>
+            <a href="{% url 'seleccionar' task.id %}">Seleccionar</a>
         </li>
     {% empty %}
         <li>No hay tareas disponibles.</li>

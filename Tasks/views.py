@@ -1,4 +1,4 @@
-
+from django.shortcuts import render, redirect, get_object_or_404
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -18,7 +18,13 @@ def tasks(request):
     tasks = Task.objects.filter(user=request.user,
                                  datecompleted__isnull=True)
     return render(request, "tasks.html",
-                  {"Tasks":tasks})
+                  {"tasks":tasks})
+
+def seleccionar(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == "POST":
+        return redirect('tasks')
+    return render(request, 'seleccionar.html', {'task': task})
 
 def create_task(request):
     if request.method == "GET":
@@ -31,12 +37,40 @@ def create_task(request):
             new_task = form.save(commit=False)
             new_task.user = request.user
             new_task.save()
-            return redirect("Tasks")
+            return redirect("tasks")
         except ValueError:
             return render(request, 
                     "create_task.html",
                    {"form": TaskForm(),
                     "error":"Por favor ingrese datos validos"})
+        
+def editar_task(request, task_id):
+    task = get_object_or_404(Task, pk=task_id, user=request.user)
+
+    if request.method == "GET":
+        form = TaskForm(instance=task)
+        return render(request, "editar.html", {"form": form})
+    else:
+        try:
+            form = TaskForm(request.POST, instance=task)
+            if form.is_valid():
+                form.save()
+                return redirect("tasks")
+            else:
+                return render(request, "editar.html", {"form": form, "error": "Datos inválidos"})
+        except ValueError:
+            return render(request, "editar.html", {"form": form, "error": "Error al editar la tarea"})
+
+def eliminar(request, task_id):
+    task = get_object_or_404(Task, id=task_id, user=request.user)
+
+    if request.method == "POST":
+        task.delete()
+        return redirect("tasks")
+
+    return render(request, "eliminar.html", {"task": task})
+
+
 
 def signout(request):
     logout(request)
@@ -58,7 +92,7 @@ def signin(request):
                            "error":"Usuario o contraseña incorrecta"})
         else:
             login(request, user)
-            return redirect("Tasks")
+            return redirect("tasks")
 
 def signup(request):
     if request.method == "GET":
@@ -72,7 +106,7 @@ def signup(request):
                                                 password=request.POST['password1'])
                 user.save()
                 login(request, user)
-                return redirect("Tasks")
+                return redirect("tasks")
 
             except IntegrityError:
                 return render(request,

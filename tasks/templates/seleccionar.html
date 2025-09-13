@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="select-task-container">
+    <h1 class="title">Seleccionar Tarea</h1>
+    <p>
+        ¿Qué deseas hacer con la tarea <strong>"{{ task.title }}"</strong>?
+    </p>
+    <a href="{% url 'editar_task' task.id %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'eliminar' task.id %}" class="btn btn-danger">Eliminar</a>
+    <a href="{% url 'tasks' %}" class="btn btn-secondary">Cancelar</a>
+</div>
+{% endblock %}
